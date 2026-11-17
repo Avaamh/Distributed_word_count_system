@@ -33,6 +33,8 @@ def main():
     query = commands.add_parser("query", help="Count one keyword in a registered book.")
     query.add_argument("document")
     query.add_argument("keyword")
+    top = commands.add_parser("top", help="List frequently requested keywords.")
+    top.add_argument("--limit", type=int, default=10)
     args = parser.parse_args()
     try:
         start = time.perf_counter()
@@ -41,6 +43,10 @@ def main():
             if args.command == "health":
                 print(f"healthy: {conn.root.ping()}")
                 return 0
+            if args.command == "top":
+                response = json.loads(conn.root.top_keywords(args.limit))
+                print(json.dumps(response, indent=2))
+                return 0 if response["ok"] else 1
             request_id = str(uuid.uuid4())
             # Resolve the remote method before starting the RPC timer.
             remote_count = conn.root.count
