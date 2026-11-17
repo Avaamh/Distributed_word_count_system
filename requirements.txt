@@ -1,3 +1,4 @@
 rpyc==6.0.2
 plumbum==1.9.0
 redis==6.4.0
+matplotlib==3.10.7

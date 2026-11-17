@@ -37,3 +37,19 @@ services:
         condition: service_healthy
     profiles: ["tools"]
     init: true
+
+  benchmark:
+    user: "${BENCHMARK_UID:-1000}:${BENCHMARK_GID:-1000}"
+    build: .
+    image: wordcount-lab:phase2
+    entrypoint: ["python", "-m", "wordcount.benchmark"]
+    volumes:
+      - ./data:/app/data:ro
+      - ./results:/app/results
+    environment:
+      MPLCONFIGDIR: /tmp/matplotlib
+    depends_on:
+      server:
+        condition: service_healthy
+    profiles: ["tools"]
+    init: true
