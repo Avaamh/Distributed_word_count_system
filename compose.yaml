@@ -1,0 +1,27 @@
+services:
+  server:
+    build: .
+    image: wordcount-lab:phase2
+    command: ["python", "-m", "wordcount.server"]
+    environment:
+      SERVER_ID: worker-1
+    volumes:
+      - ./data:/app/data:ro
+    healthcheck:
+      test: ["CMD", "python", "-m", "wordcount.client", "--host", "127.0.0.1", "health"]
+      interval: 5s
+      timeout: 4s
+      retries: 3
+      start_period: 10s
+    init: true
+
+  client:
+    build: .
+    image: wordcount-lab:phase2
+    entrypoint: ["python", "-m", "wordcount.client"]
+    command: ["query", "alice", "rabbit"]
+    depends_on:
+      server:
+        condition: service_healthy
+    profiles: ["tools"]
+    init: true
