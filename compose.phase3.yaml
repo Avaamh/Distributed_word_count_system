@@ -1,0 +1,113 @@
+x-worker: &worker
+  build: .
+  image: wordcount-lab:phase3
+  command: ["python", "-m", "wordcount.server"]
+  volumes:
+    - ./data:/app/data:ro
+  healthcheck:
+    test: ["CMD", "python", "-m", "wordcount.client", "--host", "127.0.0.1", "health"]
+    interval: 5s
+    timeout: 4s
+    retries: 3
+    start_period: 10s
+  init: true
+
+x-worker-environment: &worker-environment
+  REDIS_HOST: redis
+  REDIS_PORT: "6379"
+
+services:
+  redis:
+    image: redis:7.4-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+    init: true
+
+  server1:
+    <<: *worker
+    environment:
+      <<: *worker-environment
+      SERVER_ID: worker-1
+
+  server2:
+    <<: *worker
+    environment:
+      <<: *worker-environment
+      SERVER_ID: worker-2
+
+  server3:
+    <<: *worker
+    environment:
+      <<: *worker-environment
+      SERVER_ID: worker-3
+
+  balancer:
+    build: .
+    image: wordcount-lab:phase3
+    command:
+      - python
+      - -m
+      - wordcount.load_balancer
+      - --backend
+      - worker-1=server1:18861
+      - --backend
+      - worker-2=server2:18861
+      - --backend
+      - worker-3=server3:18861
+    depends_on:
+      server1:
+        condition: service_healthy
+      server2:
+        condition: service_healthy
+      server3:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-m", "wordcount.balancer_status", "--host", "127.0.0.1"]
+      interval: 5s
+      timeout: 4s
+      retries: 3
+      start_period: 5s
+    init: true
+
+  client:
+    build: .
+    image: wordcount-lab:phase3
+    entrypoint: ["python", "-m", "wordcount.client", "--host", "balancer", "--port", "18860"]
+    command: ["query", "alice", "rabbit"]
+    depends_on:
+      balancer:
+        condition: service_healthy
+    profiles: ["tools"]
+    init: true
+
+  distribution:
+    build: .
+    image: wordcount-lab:phase3
+    entrypoint: ["python", "-m", "wordcount.check_distribution"]
+    volumes:
+      - ./data:/app/data:ro
+    depends_on:
+      balancer:
+        condition: service_healthy
+    profiles: ["tools"]
+    init: true
+
+  benchmark:
+    user: "${BENCHMARK_UID:-1000}:${BENCHMARK_GID:-1000}"
+    build: .
+    image: wordcount-lab:phase3
+    entrypoint: ["python", "-m", "wordcount.benchmark", "--host", "balancer", "--port", "18860"]
+    volumes:
+      - ./data:/app/data:ro
+      - ./results:/app/results
+    environment:
+      MPLCONFIGDIR: /tmp/matplotlib
+    depends_on:
+      balancer:
+        condition: service_healthy
+    profiles: ["tools"]
+    init: true
