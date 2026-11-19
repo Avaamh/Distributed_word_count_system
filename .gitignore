@@ -221,3 +221,6 @@ __marimo__/
 
 # macOS Finder files
 .DS_Store
+
+# Local transfer archives
+/*.zip
