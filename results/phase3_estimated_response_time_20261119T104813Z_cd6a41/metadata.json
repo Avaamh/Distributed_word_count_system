@@ -1,0 +1,66 @@
+{
+  "settings": {
+    "host": "balancer",
+    "port": 18860,
+    "redis_host": "redis",
+    "redis_port": 6379,
+    "rates": [
+      10,
+      20,
+      30,
+      40,
+      50
+    ],
+    "duration": 30,
+    "repeats": 3,
+    "mode": "both",
+    "workers": 32,
+    "max_pending": 128,
+    "seed": 2026,
+    "label": "phase3_estimated_response_time"
+  },
+  "timestamp_utc": "20261119T104813Z",
+  "rule_version": "english-v1",
+  "python": "3.12.16",
+  "container_platform": "Linux-7.0.12-linuxkit-aarch64-with-glibc2.41",
+  "packages": {
+    "rpyc": "6.0.2",
+    "redis": "6.4.0",
+    "matplotlib": "3.10.7"
+  },
+  "source_sha256": {
+    "server.py": "0f355d49a0ad166d653d11bb37ed7ff6a8294f07073eb4adb5685ba0ec7ccf05",
+    "__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "cache.py": "010e045191dc6750ff77c69fb312b146605e4b85fe5e9bfd8c487529425ed9d6",
+    "benchmark.py": "2c575e866f6a44e930f836c5cd9c67c7b4f4e43d333f85d3d8bdcdb92b54e106",
+    "check_distribution.py": "a13d895a07f6e3103b7bd55cefe05d83dcae4ee36a34880948a9975a54c1a119",
+    "load_balancer.py": "267420970f4232dfce6c0563e571afb2e53e535a170c10bb3ef453a3fed965c9",
+    "balancer_status.py": "7edfe3f8bb57261792a8174787f3d146024088991a4acd948f9a6e5d6933d6e8",
+    "counting.py": "ff5f5d54aa64e94fa141f6bf6c1022be1780f0d6fdc27c4902fde878ec79ebe6",
+    "plot_results.py": "5bc7d1450b67f6e5f4877abcf350a800b748f581f79e3380baae09614d5cdfea",
+    "worker_metrics.py": "eb2f173a7895ad6413a4df9a8ad7829f750e11b94f9e82511a2270ff597b2adf",
+    "client.py": "4053e7fd189bf655a4983566f182f818d6c245c5be899643f3c915a9ec2d05c5"
+  },
+  "documents": {
+    "alice": {
+      "filename": "alice_in_wonderland.txt",
+      "content_sha256": "1b52f95c6f686110f72e967d3ebd3901cefd05225883b76cecc083cae724d89f",
+      "characters": 144531,
+      "tokens": 26704
+    },
+    "sherlock": {
+      "filename": "sherlock_holmes.txt",
+      "content_sha256": "378bee2eb34f6e114d4ef8c2fc433d7b3cb3c9c83995e3617675ec46cd559acd",
+      "characters": 562521,
+      "tokens": 105354
+    },
+    "war_and_peace": {
+      "filename": "war_and_peace.txt",
+      "content_sha256": "a49f3b3ad2bcf42cba906421d30c7d22a3c811727a9bbb897f72afa0c0d8d82f",
+      "characters": 3208366,
+      "tokens": 576812
+    }
+  },
+  "latency_definition": "Client count RPC invocation to receipt, excluding connection and method lookup",
+  "percentiles": "Nearest rank per repeat; plots average repeat statistics, bars show min/max"
+}
