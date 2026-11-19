@@ -1,0 +1,4 @@
+ Container distributed_word_count_system-distribution-run-9a3b0a1bc2ff Creating 
+ Container distributed_word_count_system-distribution-run-9a3b0a1bc2ff Created 
+Query failed: {'document': 'alice', 'keyword': 'rabbit', 'expected_count': 47, 'request_id': '4dc6dae9-02b9-4425-8d47-917f53bedd55', 'started': 64281.606494892, 'finished': 64281.61448585, 'start_lag_ms': 0.0030420051189139485, 'connection_ms': 0.9290419984608889, 'rpc_ms': None, 'end_to_end_ms': 7.990957994479686, 'server_id': '', 'cache_status': '', 'ok': False, 'error': 'EOFError: connection closed by peer', 'scheduled_to_finish_ms': 7.9939999995986}
+

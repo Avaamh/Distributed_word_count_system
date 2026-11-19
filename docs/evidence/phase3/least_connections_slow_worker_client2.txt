@@ -1,0 +1,3 @@
+ Container distributed_word_count_system-distribution-run-38a832d41537 Creating 
+ Container distributed_word_count_system-distribution-run-38a832d41537 Created 
+Worker query totals: {'worker-2': 5, 'worker-1': 1, 'worker-3': 14}

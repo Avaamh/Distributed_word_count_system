@@ -1,0 +1,43 @@
+{
+  "algorithm": "least_connections",
+  "worker_health_monitoring": false,
+  "metrics_polling": true,
+  "backends": [
+    {
+      "name": "worker-1",
+      "active_connections": 0,
+      "selected_connections": 14,
+      "connect_failures": 0,
+      "ewma_ms": 502.10399257090086,
+      "completed_queries": 7,
+      "metrics_age_s": 0.12,
+      "sample_age_s_at_last_poll": 0.2522662919946015,
+      "estimated_score_ms": 502.104,
+      "metrics_errors": 2
+    },
+    {
+      "name": "worker-2",
+      "active_connections": 0,
+      "selected_connections": 53,
+      "connect_failures": 0,
+      "ewma_ms": 0.4351651840595503,
+      "completed_queries": 124,
+      "metrics_age_s": 0.12,
+      "sample_age_s_at_last_poll": 1.2246380840006168,
+      "estimated_score_ms": 0.435,
+      "metrics_errors": 0
+    },
+    {
+      "name": "worker-3",
+      "active_connections": 0,
+      "selected_connections": 53,
+      "connect_failures": 0,
+      "ewma_ms": 0.3824677866071351,
+      "completed_queries": 89,
+      "metrics_age_s": 0.12,
+      "sample_age_s_at_last_poll": 0.8612290829987614,
+      "estimated_score_ms": 0.382,
+      "metrics_errors": 0
+    }
+  ]
+}

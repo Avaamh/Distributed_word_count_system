@@ -15,6 +15,8 @@ x-worker: &worker
 x-worker-environment: &worker-environment
   REDIS_HOST: redis
   REDIS_PORT: "6379"
+  METRICS_PORT: "18863"
+  QUERY_DELAY_MS: "0"
 
 services:
   redis:
@@ -32,6 +34,7 @@ services:
     environment:
       <<: *worker-environment
       SERVER_ID: worker-1
+      QUERY_DELAY_MS: "${WORKER1_DELAY_MS:-0}"
 
   server2:
     <<: *worker
@@ -52,6 +55,8 @@ services:
       - python
       - -m
       - wordcount.load_balancer
+      - --algorithm
+      - ${LB_ALGORITHM:-least_connections}
       - --backend
       - worker-1=server1:18861
       - --backend

@@ -10,6 +10,7 @@ import redis
 import rpyc
 from rpyc.utils.server import ThreadedServer
 
+from wordcount.worker_metrics import QueryMetrics, start_metrics
 from wordcount.cache import ResultCache
 from wordcount.counting import DOCUMENTS, count_document, load_document, normalize_keyword
 
@@ -17,6 +18,7 @@ LOGGER = logging.getLogger("wordcount.worker")
 SERVER_ID = os.environ.get("SERVER_ID", "worker-1")
 CACHE = None
 DOCUMENT_HASHES = {}
+METRICS = QueryMetrics()
 PROTOCOL_CONFIG = {
     "allow_pickle": False,
     "allow_public_attrs": False,
@@ -29,6 +31,7 @@ class WordCountService(rpyc.Service):
     def exposed_ping(self):
         return SERVER_ID
 
+    @METRICS.track
     def exposed_count(self, document_id, keyword, request_id):
         if not isinstance(request_id, str) or not 1 <= len(request_id) <= 64:
             return json.dumps({"ok": False, "error": "invalid_request_id"})
@@ -101,6 +104,11 @@ def main():
         DOCUMENT_HASHES[document_id] = hashlib.sha256(text.encode("utf-8")).hexdigest()
     CACHE = ResultCache(host=os.environ.get("REDIS_HOST", "redis"),
                         port=int(os.environ.get("REDIS_PORT", "6379")))
+    metrics_server = None
+    if os.environ.get("METRICS_PORT"):
+        metrics_server, _ = start_metrics(
+            METRICS, SERVER_ID, int(os.environ["METRICS_PORT"]),
+            delay_ms=float(os.environ.get("QUERY_DELAY_MS", "0")))
     LOGGER.info("Starting %s; verified %s documents; Redis caching configured", SERVER_ID, len(DOCUMENTS))
     server = ThreadedServer(
         WordCountService, hostname="0.0.0.0", port=18861,
@@ -112,6 +120,9 @@ def main():
         pass
     finally:
         server.close()
+        if metrics_server is not None:
+            metrics_server.shutdown()
+            metrics_server.server_close()
 
 
 if __name__ == "__main__":
